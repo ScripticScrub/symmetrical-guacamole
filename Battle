@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+	<head>
+		<title> Lock & Key </title>
+    <script type="text/Javascript">
+      function RandomNum(low, high)
+			{
+    			return Math.random()*(high-low) + low;
+			}
+			function RandomInt(low, high)
+			{
+			    return Math.floor(Math.random()*(high-low+1)) + low;
+			}
+
+			function RandomChar(str)
+			{
+			    return str.charAt(RandomInt(0, str.length-1));
+			}
+
+			function RandomOneOf(list)
+			{
+			    return list[RandomInt(0, list.length-1)];
+			}
+      
+      function battle(ehealth, edlow,edhigh) {
+	  // this intializes the battle
+      let playerHealth = 100
+      let enemyHealth = ehealth
+      
+       document.getElementById("divOne").innerHTML =
+                "You have " + playerHealth + " Health left<br> The enemy has " + enemyHealth + " Health left";
+	  
+	  	  
+	  function attack() {
+	  if (playerHealth <= 0 || enemyHealth <= 0) return;
+        if (weapon == "Battle Axe") {
+		let playerDamage = RandomInt(10,30);
+		let enemyDamage = RandomInt(edlow,edhigh);
+		enemyHealth= enemyHealth - playerDamage;
+          document.getElementById("Fightdiv").innerHTML =
+                "You do " + playerDamage + "and then the enemy does " + enemyDamage + " damage.";
+      
+	  }
+	  else {
+	  let playerDamage = RandomInt(5,20);
+	  let enemyDamage = RandomInt(edlow,edhigh);
+		enemyHealth= enemyHealth - playerDamage;
+      
+	
+	  }
+	  
+      }
+	  function defend() {
+	    if (playerHealth <= 0 || enemyHealth <= 0) return;
+	  
+
+        let enemyDamage = RandomInt(edlow,edhigh);
+		if (weapon == "Long Sword") {
+        let reflectChance = RandomInt(1,2); 
+
+        if (reflectChance > 1) {
+ 
+            enemyHealth = enemyHealth - enemyDamage/3;
+			halveEnemyDamage = enemyDamage/2
+            document.getElementById("Fightdiv").innerHTML =
+                "You defend and COUNTER " + enemyDamage + " damage back!";
+        } 
+		else {
+          
+            playerHealth -= enemyDamage;
+            document.getElementById("Fightdiv").innerHTML =
+                "You defend but fail to counter! You take " + halveEnemyDamage + " damage.";		
+	  }
+	  
+	  } else {  if (reflectChance > 1) { 
+		
+			enemyHealth -= enemyDamage/2;
+			halveEnemyDamage = enemyDamage/2
+            document.getElementById("Fightdiv").innerHTML =
+                "You defend and COUNTER " + enemyDamage + " damage back!";
+        } 
+		else {
+          
+            playerHealth -= enemyDamage;
+            document.getElementById("Fightdiv").innerHTML =
+                "You defend but fail to counter! You take " + enemyDamage + " damage.";		
+	  }
+ 
+	  }
+	  
+	  }
+	 
+      }
+	  
+      function startingMessage()
+      {
+        name=document.getElementById('nameBox').value;
+        document.getElementById('divOne').innerHTML=
+				'This is the story of the adventurer known as ' + name + '...<br><br>' + 'After days of traveling through the forest ' +name+ ' had finally arrived at the Tower of Evos. ' + name + ' looked up at the tall tower before them, their grip tightening on their trusty ' + weapon + '. They\'d been looking for this tower for months, many had entered with the promise of riches and fame, yet none had ever returned. ' + name + ' wondered if this was all really worth it, who knows if they\'d ever actually come back out. With doubts swirling in their mind, ' + name + ' faced a decision: Turn back and leave this quest forever unfinished, or enter the tower, and risk their life for something they couldn\'t even prove existed.<br><br><input type="button" value="Turn Back" onclick="goBack();">  <input type="button" value="Enter the tower of Evos" onclick="battle(100,1,10);"> ' ;
+      }
+      function goBack()
+      {
+        document.getElementById('divOne').innerHTML= name + ' turned back, fearing the dangers that lurked inside. They lived the rest of their lives going on smaller, safer adventures. This is until they took an arrow to the knee, after that they had to sell their ' + weapon + ' to survive. Years later when they passed, no one noticed, they died alone, forgotten by all.<br><br><input type="button" value="Try again?" onclick="startingMessage();">';
+      }
+      function enterTower()
+      {
+        document.getElementById('divOne').innerHTML= name + ' steadied themself and walkted to the doors of the tower. It took all their might to push them open, once inside the doors slammed shut behind them, locking them inside and sealing their fate. Before them stood a large dooc covered in chains and locks, to the left a staircase leading up to the floor above, and to the right lay a simple chest against the wall. <br><br><input type="button" value="Check Tower Door" onclick="towerDoor();">  <input type="button" value="Check Chained Door" onclick="">  <input type="button" value="Go up stairs" onclick="">  <input type="button" value="Check Chest" onclick="">';
+      }
+      function towerDoor()
+      {
+      	document.getElementById('divOne').innerHTML= name + ' turned back to look at the door, not even a sliver of light from the outside made it beyond the heavy doors.' name + ' pressed against the doors with all their might but they reffused to budge. <br><br> <input type="button" value="Turn Back" onclick="enterTower();">';
+      }
+    </script>
+	</head>
+
+	<body style="text-align:center; background-color:DarkSlateGray;color:Cornsilk;">
+    <br><h1> Lock & Key </h1><hr>
+    <h4>Please enter your character's name: </h4>
+    <input type="text" id="nameBox" size=10 value=""><br>
+    <input type="button" id="axe" value="Battle Axe"
+           onclick="weapon=document.getElementById('axe').value;
+                    startingMessage();">
+    <input type="button" id="sword" value="Long Sword"
+           onclick="weapon=document.getElementById('sword').value;
+                    startingMessage();"> <br> <hr><br>
+    <div id="divOne"></div>
+    <div id="Fightdiv"></div>
+	</body>
+</html>
+      
+	  
