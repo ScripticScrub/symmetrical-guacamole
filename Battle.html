@@ -22,81 +22,122 @@
 			    return list[RandomInt(0, list.length-1)];
 			}
       
-      function battle(ehealth, edlow,edhigh) {
-	  // this intializes the battle
-      let playerHealth = 100
-      let enemyHealth = ehealth
-      
-       document.getElementById("divOne").innerHTML =
-                "You have " + playerHealth + " Health left<br> The enemy has " + enemyHealth + " Health left";
-	  
-	  	  
-	  function attack() {
-	  if (playerHealth <= 0 || enemyHealth <= 0) return;
-        if (weapon == "Battle Axe") {
-		let playerDamage = RandomInt(10,30);
-		let enemyDamage = RandomInt(edlow,edhigh);
-		enemyHealth= enemyHealth - playerDamage;
-          document.getElementById("Fightdiv").innerHTML =
-                "You do " + playerDamage + "and then the enemy does " + enemyDamage + " damage.";
-      
-	  }
-	  else {
-	  let playerDamage = RandomInt(5,20);
-	  let enemyDamage = RandomInt(edlow,edhigh);
-		enemyHealth= enemyHealth - playerDamage;
-      
-	
-	  }
-	  
-      }
-	  function defend() {
-	    if (playerHealth <= 0 || enemyHealth <= 0) return;
-	  
+    function battle(playerHealth,enemyHealth, enemyDamageLow,enemyDamageHigh, enemy) {
+      // this initializes the battle, give players two buttons, show enemy health and their own on screen.
+      let pHealth = playerHealth;
+      let eHealth = enemyHealth;
+      UpdateUI();
 
-        let enemyDamage = RandomInt(edlow,edhigh);
-		if (weapon == "Long Sword") {
-        let reflectChance = RandomInt(1,2); 
-
-        if (reflectChance > 1) {
- 
-            enemyHealth = enemyHealth - enemyDamage/3;
-			halveEnemyDamage = enemyDamage/2
-            document.getElementById("Fightdiv").innerHTML =
-                "You defend and COUNTER " + enemyDamage + " damage back!";
-        } 
-		else {
-          
-            playerHealth -= enemyDamage;
-            document.getElementById("Fightdiv").innerHTML =
-                "You defend but fail to counter! You take " + halveEnemyDamage + " damage.";		
-	  }
-	  
-	  } else {  if (reflectChance > 1) { 
-		
-			enemyHealth -= enemyDamage/2;
-			halveEnemyDamage = enemyDamage/2
-            document.getElementById("Fightdiv").innerHTML =
-                "You defend and COUNTER " + enemyDamage + " damage back!";
-        } 
-		else {
-          
-            playerHealth -= enemyDamage;
-            document.getElementById("Fightdiv").innerHTML =
-                "You defend but fail to counter! You take " + enemyDamage + " damage.";		
-	  }
- 
-	  }
-	  
-	  }
-	 
+      function UpdateUI() {
+        document.getElementById('log').innerHTML = 'Player Health: ' + pHealth + '<br> Enemy Health: ' + eHealth + '<br>';
       }
+
+      function endCheck() {
+        if (pHealth <= 0) {
+          document.getElementById('log').innerHTML = ''
+          document.getElementById('divOne').innerHTML= ' As the ' + enemy + ' strikes ' + name + ' down, their eyes start to close as they realize their adventure is ending... <br><br><input type="button" value="Try again?" onclick="startingMessage();">';
+        }
+        if (eHealth <= 0 ) {
+          if (enemy == 'Goblin') {
+             if (key2Collect=="false"){
+        	keycount=keycount+1; 
+          key2Collect="true";
+               document.getElementById('keys').innerHTML= name + " has " + keycount + " keys";
+             }   
+            document.getElementById('log').innerHTML = ''
+            document.getElementById('divOne').innerHTML= ' As ' + name + ' strikes down the goblin they notice a key on the goblins neck and take it for themselves.   <br><br><input type="button" value="Continue" onclick="floorTwoDescription()">';
+          }
+          if (enemy == 'Reflection') {
+             if (key3Collect=="false"){
+        	keycount=keycount+1; 
+          key3Collect="true";
+             document.getElementById('keys').innerHTML=name + " has " + keycount + " keys";}
+            
+            document.getElementById('log').innerHTML = ''
+            document.getElementById('divOne').innerHTML=  name + ' breathe\'s heavy after the battle, their health drained from the reflections harsh attacks. They stumble towards the pile of shards that lay before them. The sharp glass hiding the final key beneath.' + name + ' digs their hand into the glass, not caring about the shards cutting into their skin to grab the key.' + name + ' rises to their feet and turn back to the stairs. The battle is over and they stand victorious.  <br><br><input type="button" value="Continue" onclick="finalBattleWin();">';
+
+          }
+        }
+      }
+
+
+      function Damage() {
+        let playerDamage;
+        if (weapon === "Battle Axe") {
+          playerDamage = RandomInt(10, 25);
+        }
+        if (weapon === "Long Sword") {
+          playerDamage = RandomInt(5, 20);
+        }
+         let enemyDamage = RandomInt(enemyDamageLow, enemyDamageHigh);
+        if (enemy === 'Reflection') {
+           enemyDamage = playerDamage;
+        }
+        
+        eHealth = eHealth - playerDamage;
+        pHealth = pHealth - enemyDamage;
+        UpdateUI();
+
+        document.getElementById('divOne').innerHTML='You dealt ' + playerDamage + '<br> The ' + enemy +' dealt ' + enemyDamage + '<br><br>What do you do?<br><br> <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">'
+        endCheck();
+      }
+
+      function Defend() {
+        let counterChance, playerDamage;
+         if (enemy === 'Reflection') {
+           document.getElementById('divOne').innerHTML='You both seem to guard at the same time and nothing seems to happen.<br><br>What do you do?<br><br> <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">';
+        }
+        else {
+        if (weapon === "Battle Axe") {
+          counterChance = RandomInt(1,2);
+          playerDamage = RandomInt(1, 25);
+        }
+        if (weapon === "Long Sword") {
+          counterChance = RandomInt(1,4);
+          playerDamage = RandomInt(5, 20);
+        }
+        
+
+        if (counterChance > 1) {
+          eHealth = eHealth - playerDamage;
+          UpdateUI();
+
+          document.getElementById('divOne').innerHTML='You defended, and countered! Dealing ' + playerDamage + ' damage<br> The ' + enemy + ' deals no damage due to the successful defense.   <br><br>What do you do?<br><br> <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">'
+          endCheck();
+        }
+        else {
+          let halfEnemyDamage = Math.floor(RandomInt(enemyDamageLow, enemyDamageHigh)/2) ;
+          pHealth = pHealth - halfEnemyDamage;
+          UpdateUI();
+          document.getElementById('divOne').innerHTML = 'You tried to defend, but only blocked some of the attack! <br> You took  ' + halfEnemyDamage + ' damage instead   <br><br>What do you do?<br><br> <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">'
+          endCheck();
+        }
+        }
+      }
+      window.Damage = Damage;
+      window.Defend = Defend;
+      if (enemy == 'Goblin') {
+         document.getElementById('divOne').innerHTML='The goblin comes running at you and pulls out his club for a battle!<br><br> What do you do? <br><br>  <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">'
+      }
+      if (enemy == 'Reflection') {
+          document.getElementById('divOne').innerHTML='The mirror shatters and something that looks exactly like you holding a ' + weapon + ' in it\'s hands walks through the mirror\'s frame almost like a reflection.  <br><br> What do you do? <br><br>  <input type="button" value="Attack" onclick="Damage();"> or <input type="button" value="Defend" onclick="Defend();">';
+          }
+     
+    }    
+
+      
 	  
-      function startingMessage()
+   function startingMessage()
       {
+        document.getElementById('log').innerHTML='';
+        keycount=0;
+        key1Collect="false";
+        key2Collect="false";
+        key3Collect="false";
         name=document.getElementById('nameBox').value;
+        document.getElementById('keys').innerHTML=name + " has " + keycount + " keys";
         document.getElementById('divOne').innerHTML=
-				'This is the story of the adventurer known as ' + name + '...<br><br>' + 'After days of traveling through the forest ' +name+ ' had finally arrived at the Tower of Evos. ' + name + ' looked up at the tall tower before them, their grip tightening on their trusty ' + weapon + '. They\'d been looking for this tower for months, many had entered with the promise of riches and fame, yet none had ever returned. ' + name + ' wondered if this was all really worth it, who knows if they\'d ever actually come back out. With doubts swirling in their mind, ' + name + ' faced a decision: Turn back and leave this quest forever unfinished, or enter the tower, and risk their life for something they couldn\'t even prove existed.<br><br><input type="button" value="Turn Back" onclick="goBack();">  <input type="button" value="Enter the tower of Evos" onclick="battle(100,1,10);"> ' ;
+				'This is the story of the adventurer known as ' + name + '...<br><br>' + 'After days of traveling through the forest ' +name+ ' had finally arrived at the Tower of Evos. ' + name + ' looked up at the tall tower before them, their grip tightening on their trusty ' + weapon + '. They\'d been looking for this tower for months, many had entered with the promise of riches and fame, yet none had ever returned. ' + name + ' wondered if this was all really worth it, who knows if they\'d ever actually come back out. With doubts swirling in their mind, ' + name + ' faced a decision: Turn back and leave this quest forever unfinished, or enter the tower, and risk their life for something they couldn\'t even prove existed.<br><br><input type="button" value="Turn Back" onclick="goBack();">  <input type="button" value="Enter the tower of Evos" onclick="enterTower();"> ' ;
       }
       function goBack()
       {
@@ -104,12 +145,66 @@
       }
       function enterTower()
       {
-        document.getElementById('divOne').innerHTML= name + ' steadied themself and walkted to the doors of the tower. It took all their might to push them open, once inside the doors slammed shut behind them, locking them inside and sealing their fate. Before them stood a large dooc covered in chains and locks, to the left a staircase leading up to the floor above, and to the right lay a simple chest against the wall. <br><br><input type="button" value="Check Tower Door" onclick="towerDoor();">  <input type="button" value="Check Chained Door" onclick="">  <input type="button" value="Go up stairs" onclick="">  <input type="button" value="Check Chest" onclick="">';
+        if (keycount > 1 ) {
+        document.getElementById('divOne').innerHTML='On the first floor stood a large door covered in chains and locks, to the left a staircase leading up to the floor above, and to the right lay a simple chest against the wall. <br><br><input type="button" value="Check Tower Door" onclick="towerDoor();">  <input type="button" value="Check Chained Door" onclick="chainDoor();">  <input type="button" value="Check Chest" onclick="checkChest();">  ';}
+        else { document.getElementById('divOne').innerHTML=name + ' steadied themself and walked to the wooden doors of the tower. It took all their might to push them open, once inside the doors slammed shut behind them, locking them inside and sealing their fate. Before them stood a large door covered in chains and locks, to the left a staircase leading up to the floor above, and to the right lay a simple chest against the wall. <br><br><input type="button" value="Check Tower Door" onclick="towerDoor();">  <input type="button" value="Check Chained Door" onclick="chainDoor();">  <input type="button" value="Check Chest" onclick="checkChest();">  <input type="button" value="Go up stairs" onclick="floorTwo();">'; }
       }
       function towerDoor()
       {
-      	document.getElementById('divOne').innerHTML= name + ' turned back to look at the door, not even a sliver of light from the outside made it beyond the heavy doors.' name + ' pressed against the doors with all their might but they reffused to budge. <br><br> <input type="button" value="Turn Back" onclick="enterTower();">';
+      	document.getElementById('divOne').innerHTML= name + ' turned back to look at the door, not even a sliver of light from the outside made it beyond the heavy doors. '+ name + ' pressed against the doors with all their might but they refused to budge. <br><br> <input type="button" value="Turn Back" onclick="enterTower();">';
       }
+      function chainDoor()
+      {
+      	document.getElementById('divOne').innerHTML= name + ' walked to the doors infront of them. The doors were made of heavy metal, standing out from the surrounding stone, the chains covering the door were coated in rust and dried blood, most likely from those who came before. Unlike the chains, the locks on them were clean of rust and blood, each appearing to reflect a floor of the tower, including the floor ' + name + ' was currently standing in. It looks like there are 3 locks in total. <br><br><input type="button" value="Turn Back" onclick="enterTower();">  <input type="button" value="Use Keys" onclick="unlockDoor();">';
+      }
+      function checkChest()
+      {
+        if (key1Collect=="false"){
+        	keycount=keycount+1; 
+          key1Collect="true";
+          document.getElementById('keys').innerHTML=name + " has " + keycount + " keys";
+        }
+      	document.getElementById('divOne').innerHTML= name + ' looked at the chest on the side of the room, it was small, the wood was cracked and the metal was rusted... yet the inside was pristine, covered in red suede with a small black key at the bottom. ' + name + ' grabbed they key and stuffed it into their pockets. <br><br><input type="button" value="Turn Back" onclick="enterTower();">';
+      }
+      function floorTwo()
+      {
+      	document.getElementById('divOne').innerHTML= name + ' looked at the staircase before them, the cracked stone bricks leading into the darkness. Chills ran down their spine as they began to acend the stairs. As they accend, the smell of death invades their nose. The second floor comes into view slowly. ' + name + ' sees a goblin standing near a wall, seemingly tring to escape the tower as it hits the wall over and over with its club, barely leaving a dent. <br><br><input type="button" value="Attack" onclick="battle(100, 100, 1, 10, \'Goblin\');">';
+      }
+      function floorTwoDescription()
+      {
+      document.getElementById('divOne').innerHTML='As ' + name + ' recovers from the battle, they look around the room. The area is nearly empty, some torches on the wall lighting the room, a small table off to the side, but other than that it was empty. A small book lay on the table next to the stairs to the third floor. <br><br><input type="button" value="Investigate Book" onclick="book()"> <input type="button" value="Go the Third Floor" onclick="floorThree();">';
+      }
+      function book()
+      {
+        document.getElementById('divOne').innerHTML='The book is mostly unintelligible apart from one line... "The key lies beyone the mirror"... Whatever that means.<br><br><input type="button" value="Go back" onclick="floorTwoDescription();"> ';
+      }
+      function floorThree()
+      {
+				document.getElementById('divOne').innerHTML= name + ' once agains begins to accend the stairs to the third floor of the tower. Reaching the third floor only revals an empty room with mirrors covering the walls, on the other side of the mirror lies to final key, yet when you look down, it is no where to be seen... <br><br><input type="button" value="Break the Mirror" onclick="battle(100,100,1,1,\'Reflection\');"> ';
+      }
+      function finalBattleWin()
+      {
+        document.getElementById('divOne').innerHTML= name + ' walks down the stairs, they walk quickly, wanting nothing more than to leave the tower. As they reach the second floor they look upon the goblin they killed earlier, it\'s body lays on the cold stone floor of the tower. ' + name + ' hesitates for a moment before they slowly walk around the goblins body, moving towards the staircase to the first floor. <br><br><input type="button" value="Continue" onclick="enterTower();">';
+      }
+      function unlockDoor()
+      {
+        if (keycount == 3 ) {
+        document.getElementById('divOne').innerHTML= name + ' undoes the locks and begins to open the door...  <br><br><input type="button" value="Continue" onclick="ending();">';}
+        else { 
+          document.getElementById('divOne').innerHTML=name + ' unlocks ' + keycount + ' locks. <br><br><input type="button" value="Turn back" onclick="enterTower();">'; 
+      	}
+      }
+      function ending(){
+        document.getElementById('divOne').innerHTML= 'You wihn. <br><br> <h6>go outside.<\h6>';
+      }
+    
+ <!doctype html>
+<html>
+	<head>
+		<title> Lock & Key </title>
+    <script type="text/Javascript" src="story.js">
+    </script>
+	<script type="text/Javascript" src="fight.js">
     </script>
 	</head>
 
@@ -123,9 +218,15 @@
     <input type="button" id="sword" value="Long Sword"
            onclick="weapon=document.getElementById('sword').value;
                     startingMessage();"> <br> <hr><br>
+     
+     <div id="keys" style="text-align:center;"></div><br><hr><br>
     <div id="divOne"></div>
-    <div id="Fightdiv"></div>
+    <div id="log"></div>
+   
+    
 	</body>
 </html>
+ 
+
       
 	  
