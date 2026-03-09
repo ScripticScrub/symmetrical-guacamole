@@ -1,1 +1,1 @@
-Place to store School projects
+Place to store school projects
